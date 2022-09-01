@@ -6,6 +6,8 @@
     <edmx:Diagrams>
       <Diagram DiagramId="2d8834bb2a034c6eba0e5fc38bc53243" Name="Diagram1">
         <EntityTypeShape EntityType="ZenClientTicketModel1.TicketEntry" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ZenClientTicketModel1.TicketEntry1" Width="1.5" PointX="3.75" PointY="0.75" />
+        <EntityTypeShape EntityType="ZenClientTicketModel1.TicketEntry2" Width="1.5" PointX="0.75" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

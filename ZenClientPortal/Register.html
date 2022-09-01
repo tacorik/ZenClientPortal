@@ -42,7 +42,7 @@
             charset="utf8"
             src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
     <script>
-        fetch("https://localhost:44368/api/zenticket")
+        fetch("api/zenticket/3")
             .then((data) => data.json())
             .then((data) => {
                 $("#tbl").DataTable({

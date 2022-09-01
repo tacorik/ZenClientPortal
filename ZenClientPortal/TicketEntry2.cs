@@ -12,12 +12,11 @@ namespace ZenClientPortal
     using System;
     using System.Collections.Generic;
     
-    public partial class TicketEntry
+    public partial class TicketEntry2
     {
         public int TicketID { get; set; }
         public string Header { get; set; }
         public string TicDescription { get; set; }
-        public string TicStatus { get; set; }
-        public string Username { get; set; }
+        public Nullable<int> TicStatus { get; set; }
     }
 }

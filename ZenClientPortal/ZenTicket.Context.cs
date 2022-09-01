@@ -26,5 +26,7 @@ namespace ZenClientPortal
         }
     
         public virtual DbSet<TicketEntry> TicketEntries { get; set; }
+        public virtual DbSet<TicketEntry1> TicketEntry1 { get; set; }
+        public virtual DbSet<TicketEntry2> TicketEntry2 { get; set; }
     }
 }

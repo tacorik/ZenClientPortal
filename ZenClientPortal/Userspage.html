@@ -1,0 +1,398 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        form {
+            border: 3px solid #f1f1f1;
+            background-color: azure
+        }
+        #unamex {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0px;
+            display: inline;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        #pswx {
+            width: 100%;
+            height:80px;
+            padding: 12px 20px;
+            margin: 8px 0px;
+            display: inline;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .cancelbtnx {
+            width: 100%;
+            color: white;
+            padding: 10px 18px;
+            background-color: #46b8da;
+            border-radius: 3rem;
+        }
+
+        #cq {
+            align-content:center;
+            width: 45%;
+        }
+
+        #ticketinput
+        {
+            width:80%;
+        }
+
+        .containerx {
+            padding: 16px;
+        }
+        .ticket {
+            background-color: #f5f5f5;
+            width: 50%;
+        }
+
+        p.psw {
+            text-align: right;
+        }
+    </style>
+</head>
+<body style="padding-top:20px">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well">
+            <input id="createaticket" class="btn btn-success"
+                   type="button" value="Create a Ticket" />
+            <input id="btnLoadEmployees" class="btn btn-success"
+                   type="button" value="Load All My Tickets" />
+            <input id="btnLogout" class="btn btn-danger pull-right"
+                   type="button" value="Logout" />
+            <span id="spanuserName" class="test-muted pull-right btn btn-warning"></span>
+            <input id="btnActiveTic" class="btn btn-success"
+                   type="button" value="My Active Tickets" />
+            <input id="btnInprogTic" class="btn btn-success"
+                   type="button" value="My Inprogress Tickets" />
+            <input id="btnCompTic" class="btn btn-success"
+                   type="button" value="My Completed Tickets" />
+
+
+        </div>
+        <div id="ticketinput" class="well-sm hidden">
+            <div id="cq">
+                <div class="containerx">
+                    <label for="uname"><b>Ticket Header</b></label>
+                    <input type="text" placeholder="Enter The Ticket Subject" id="unamex" size="30" name="uname" required>
+
+                    <label for="psw"><b>Ticket Description</b></label>
+                    <textarea type="text" placeholder="Enter The Ticket Description" id="pswx" size="80" name="psw" required></textarea>
+                    <br />
+                    <br />
+                    <br />
+                    <!--<button id="btnLoginx" type="submit">Login</button>-->
+                    <!--<label>
+      <input type="checkbox" checked="checked" name="remember"> Remember me
+    </label>-->
+                    <!--<p id="newx" style="align-content:center"><b>&nbsp;&nbsp;&nbsp; New to Zen !!</b></p>-->
+
+                    <button id="post" type="button" class="cancelbtnx btn-info btn-primary"> Post My Ticket</button>
+
+                    <div id="divError" class="alert alert-danger collapse">
+                        <a id="linkClose" href="#" class="close">&times;</a>
+                        <div id="divErrorText"></div>
+                    </div>
+                    <!--<p class="psw"> <a href="#">Forgot Password?</a></p>-->
+                </div>
+            </div>
+        </div>
+        <div id="divData" class="well hidden">
+            <table class="table table-bordered" id="tblData">
+                <thead>
+                    <tr class="success">
+                        <td>Ticket ID</td>
+                        <td>Ticket Header</td>
+                        <td>Ticket Description</td>
+                        <td>Ticket Status</td>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+        <div class="modal fade" tabindex="-1" id="errorModal"
+             data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                        <h4 class="modal-title">Session Expired</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <h2 class="modal-title">Close this message to login again</h2>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger"
+                                data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="divError" class="alert alert-danger collapse">
+            <a id="linkClose" href="#" class="close">&times;</a>
+            <div id="divErrorText"></div>
+        </div>
+    </div>
+    <script src="Scripts/jquery-3.4.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (localStorage.getItem('accessToken') == null) {
+                window.location.href = "MyLoginPage.html";
+            }
+            var a = localStorage.getItem('userName');
+            var temp = a.replace('@', "%40");
+            var res = temp.replace('.', "~");
+            if (localStorage.getItem('userName') == "admin@portal.com") { window.location.href = "Admin.html"; }
+            $('#spanuserName').text('Hello ' + localStorage.getItem('userName'));
+            $('#btnLogout').click(function () {
+            localStorage.removeItem('accessToken');
+                window.location.href = "MyLoginPage.html";
+            })
+          
+
+
+            $('#linkClose').click(function () {
+                $('#divError').hide('fade');
+            });
+
+            $('#errorModal').on('hidden.bs.modal', function () {
+                window.location.href = "MyLoginPage.html";
+            });
+
+            $('#btnLoadEmployees').click(function () {
+                $.ajax({
+                    url: '/api/ZenTicket/' + res,
+                    method: 'GET',
+                   
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + localStorage.getItem("accessToken"),
+                        
+                    },
+
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                      
+                       /* $('#ticketinput').empty();*/  
+                        $('#ticketinput').addClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>'
+                                + value.TicketID + '</td><td>'
+                                + value.Header + '</td><td>'
+                                + value.TicDescription + '</td><td>'
+                                + value.TicStatus + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+
+            $('#btnActiveTic').click(function () {
+                $.ajax({
+                    url: '/api/ZenTicket/1/'+res,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + localStorage.getItem("accessToken")
+                    },
+                  
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        /* $('#ticketinput').empty();*/ 
+                        $('#ticketinput').addClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>'
+                                + value.TicketID + '</td><td>'
+                                + value.Header + '</td><td>'
+                                + value.TicDescription + '</td><td>'
+                                + value.TicStatus + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+
+            $('#btnInprogTic').click(function () {
+                $.ajax({
+                    url: '/api/ZenTicket/2/'+res,
+                    method: 'GET',
+                    
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + localStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#ticketinput').addClass('hidden');
+                        /*  $('#ticketinput').empty();*/
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>'
+                                + value.TicketID + '</td><td>'
+                                + value.Header + '</td><td>'
+                                + value.TicDescription + '</td><td>'
+                                + value.TicStatus + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+
+            $('#btnCompTic').click(function () {
+                $.ajax({
+                    url: '/api/ZenTicket/3'+res,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + localStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#ticketinput').addClass('hidden');
+                        
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>'
+                                + value.TicketID + '</td><td>'
+                                + value.Header + '</td><td>'
+                                + value.TicDescription + '</td><td>'
+                                + value.TicStatus + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+           
+
+            $('#createaticket').click(function () {
+                $('#tblBody').empty();
+                $('#divData').addClass('hidden');
+                $('#ticketinput').removeAttr('class')
+                $('#ticketinput').setAttribute("class", "well-sm");
+                //$.ajax({
+                //    url: '/api/ZenTicket/2',
+                //    method: 'GET',
+                //    headers: {
+                //        'Authorization': 'Bearer '
+                //            + localStorage.getItem("accessToken")
+                //    },
+                //    success: function (data) {
+                //        $('#divData').removeClass('hidden');
+                //        $('#tblBody').empty();
+                //        $.each(data, function (index, value) {
+                //            var row = $('<tr><td>'
+                //                + value.TicketID + '</td><td>'
+                //                + value.Header + '</td><td>'
+                //                + value.TicDescription + '</td><td>'
+                //                + value.TicStatus + '</td></tr>');
+                //            $('#tblData').append(row);
+                //        });
+                //    },
+                //    error: function (jQXHR) {
+                //        // If status code is 401, access token expired, so
+                //        // redirect the user to the login page
+                //        if (jQXHR.status == "401") {
+                //            $('#errorModal').modal('show');
+                //        }
+                //        else {
+                //            $('#divErrorText').text(jqXHR.responseText);
+                //            $('#divError').show('fade');
+                //        }
+                //    }
+                //});
+            });
+            $('#post').click(function () {
+                $.ajax({
+                    url: '/api/Zenticket',
+                    method: 'POST',
+                    data: {
+                        Header: $('#unamex').val(),
+                        TicDescription: $('#pswx').val(),
+                        TicStatus: 1,
+                        Username: localStorage.getItem('userName')
+                    },
+                    success: function () {
+                       
+                    },
+                    error: function (jqXHR) {
+                        $('#divErrorText').text(jqXHR.responseText);
+                        $('#divError').show('fade');
+                    }
+                });
+            });
+
+            $('#post').click(function () {
+                $('#unamex').val('');
+                $('#pswx').val('');
+            });
+
+          
+
+
+        });
+    </script>
+</body>
+</html>

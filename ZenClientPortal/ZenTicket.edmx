@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ZenClientTicketModel1.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ZenClientTicketModel1.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="TicketEntry">
           <Key>
             <PropertyRef Name="TicketID" />
@@ -13,12 +13,32 @@
           <Property Name="Header" Type="nvarchar" MaxLength="50" />
           <Property Name="TicDescription" Type="nvarchar" MaxLength="200" />
           <Property Name="TicStatus" Type="varchar" MaxLength="1" />
+          <Property Name="Username" Type="varchar" MaxLength="25" />
+        </EntityType>
+        <EntityType Name="TicketEntry1">
+          <Key>
+            <PropertyRef Name="TicketID" />
+          </Key>
+          <Property Name="TicketID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Header" Type="nvarchar" MaxLength="50" />
+          <Property Name="TicDescription" Type="nvarchar" MaxLength="200" />
+          <Property Name="TicStatus" Type="int" />
+        </EntityType>
+        <EntityType Name="TicketEntry2">
+          <Key>
+            <PropertyRef Name="TicketID" />
+          </Key>
+          <Property Name="TicketID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Header" Type="nvarchar" MaxLength="50" />
+          <Property Name="TicDescription" Type="nvarchar" MaxLength="200" />
+          <Property Name="TicStatus" Type="int" />
         </EntityType>
         <EntityContainer Name="ZenClientTicketModel1StoreContainer">
           <EntitySet Name="TicketEntry" EntityType="Self.TicketEntry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TicketEntry1" EntityType="Self.TicketEntry1" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TicketEntry2" EntityType="Self.TicketEntry2" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ZenClientTicketModel1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -30,10 +50,31 @@
           <Property Name="Header" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="TicDescription" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="TicStatus" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="Username" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityContainer Name="ZenClientTicketEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="TicketEntries" EntityType="Self.TicketEntry" />
+          <EntitySet Name="TicketEntry1" EntityType="ZenClientTicketModel1.TicketEntry1" />
+          <EntitySet Name="TicketEntry2" EntityType="ZenClientTicketModel1.TicketEntry2" />
         </EntityContainer>
+        <EntityType Name="TicketEntry1">
+          <Key>
+            <PropertyRef Name="TicketID" />
+          </Key>
+          <Property Name="TicketID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Header" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TicDescription" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TicStatus" Type="Int32" />
+        </EntityType>
+        <EntityType Name="TicketEntry2">
+          <Key>
+            <PropertyRef Name="TicketID" />
+          </Key>
+          <Property Name="TicketID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Header" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TicDescription" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TicStatus" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -43,10 +84,31 @@
           <EntitySetMapping Name="TicketEntries">
             <EntityTypeMapping TypeName="ZenClientTicketModel1.TicketEntry">
               <MappingFragment StoreEntitySet="TicketEntry">
+                <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="TicketID" ColumnName="TicketID" />
                 <ScalarProperty Name="Header" ColumnName="Header" />
                 <ScalarProperty Name="TicDescription" ColumnName="TicDescription" />
                 <ScalarProperty Name="TicStatus" ColumnName="TicStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TicketEntry1">
+            <EntityTypeMapping TypeName="ZenClientTicketModel1.TicketEntry1">
+              <MappingFragment StoreEntitySet="TicketEntry1">
+                <ScalarProperty Name="TicStatus" ColumnName="TicStatus" />
+                <ScalarProperty Name="TicDescription" ColumnName="TicDescription" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="TicketID" ColumnName="TicketID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TicketEntry2">
+            <EntityTypeMapping TypeName="ZenClientTicketModel1.TicketEntry2">
+              <MappingFragment StoreEntitySet="TicketEntry2">
+                <ScalarProperty Name="TicStatus" ColumnName="TicStatus" />
+                <ScalarProperty Name="TicDescription" ColumnName="TicDescription" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="TicketID" ColumnName="TicketID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

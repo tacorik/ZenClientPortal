@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body style="padding-top:20px">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well">
+            <input id="btnLoadEmployees" class="btn btn-success"
+                   type="button" value="Load Tickets" />
+            <input id="btnLogout" class="btn btn-danger pull-right"
+                   type="button" value="Logout" />
+            <span id="spanuserName" class="test-muted pull-right btn btn-warning"></span>
+            <input id="btnActiveTic" class="btn btn-success"
+                   type="button" value="Load Active Tickets" />
+            <input id="btnInprogTic" class="btn btn-success"
+                   type="button" value="Load Inprogress Tickets" />
+            <input id="btnCompTic" class="btn btn-success"
+                   type="button" value="Load Completed Tickets" />
+
+        </div>
+        <div id="divData" class="well hidden">
+            <table class="table table-bordered" id="tblData">
+                <thead>
+                    <tr class="success">
+                        <td>Ticket ID</td>
+                        <td>Header</td>
+                        <td>Ticket Description</td>
+                        <td>Ticket Status</td>
+                        <td>Username</td>
+                    </tr>
+                </thead>
+                <tbody id="tblBody"></tbody>
+            </table>
+        </div>
+        <div class="modal fade" tabindex="-1" id="errorModal"
+             data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                        <h4 class="modal-title">Session Expired</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <h2 class="modal-title">Close this message to login again</h2>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger"
+                                data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="divError" class="alert alert-danger collapse">
+            <a id="linkClose" href="#" class="close">&times;</a>
+            <div id="divErrorText"></div>
+        </div>
+    </div>
+    <script src="Scripts/jquery-3.4.1.min.js"></script>   
+    <script src="Scripts/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (localStorage.getItem('accessToken') == null) {
+                window.location.href = "MyLoginPage.html";
+            }
+            if (localStorage.getItem('userName') !== "admin@portal.com")
+            { window.location.href = "Userspage.html"; }
+
+            $('#spanuserName').text('Hello ' + localStorage.getItem('userName'));
+            $('#btnLogout').click(function () {
+            localStorage.removeItem('accessToken');
+                window.location.href = "MyLoginPage.html";
+            })
+
+
+
+            $('#linkClose').click(function () {
+                $('#divError').hide('fade');
+            });
+
+            $('#errorModal').on('hidden.bs.modal', function () {
+                window.location.href = "MyLoginPage.html";
+            });
+
+            $('#btnLoadEmployees').click(function () {
+                $.ajax({
+                    url: '/api/ZenTicket',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + localStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>' 
+                                + value.TicketID + '</td><td>'
+                                + value.Header + '</td><td>'
+                                + value.TicDescription + '</td><td>'
+                                + value.TicStatus + '</td><td>'
+                                + value.Username + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+
+            $('#btnCompTic').click(function () {
+                $.ajax({
+                    url: '/api/ZenTicket/3',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + localStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>'
+                                + value.TicketID + '</td><td>'
+                                + value.Header + '</td><td>'
+                                + value.TicDescription + '</td><td>'
+                                + value.TicStatus + '</td><td>'
+                                + value.Username + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+
+
+            $('#btnInprogTic').click(function () {
+                $.ajax({
+                    url: '/api/ZenTicket/2',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + localStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>'
+                                + value.TicketID + '</td><td>'
+                                + value.Header + '</td><td>'
+                                + value.TicDescription + '</td><td>'
+                                + value.TicStatus + '</td><td>'
+                                + value.Username + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+            $('#btnActiveTic').click(function () {
+                $.ajax({
+                    url: '/api/ZenTicket/1',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer '
+                            + localStorage.getItem("accessToken")
+                    },
+                    success: function (data) {
+                        $('#divData').removeClass('hidden');
+                        $('#tblBody').empty();
+                        $.each(data, function (index, value) {
+                            var row = $('<tr><td>'
+                                + value.TicketID + '</td><td>'
+                                + value.Header + '</td><td>'
+                                + value.TicDescription + '</td><td>'
+                                + value.TicStatus + '</td><td>'
+                                + value.Username + '</td></tr>');
+                            $('#tblData').append(row);
+                        });
+                    },
+                    error: function (jQXHR) {
+                        // If status code is 401, access token expired, so
+                        // redirect the user to the login page
+                        if (jQXHR.status == "401") {
+                            $('#errorModal').modal('show');
+                        }
+                        else {
+                            $('#divErrorText').text(jqXHR.responseText);
+                            $('#divError').show('fade');
+                        }
+                    }
+                });
+            });
+
+
+        });
+    </script>
+</body>
+</html>
